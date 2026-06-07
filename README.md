@@ -12,11 +12,7 @@ To minimize L1 cache misses and prevent cache-line straddling, the `SymbolState`
 ### 2. Branchless State Registry
 Standard library hash maps (`std::unordered_map`) incur unacceptable heap allocation and pointer-chasing overhead. We utilize a **fixed-size, open-addressed hash table** with a deterministic DJB2 hashing algorithm, ensuring $O(1)$ lookups that reside entirely within the L1 cache.
 
-### 3. SIMD-Accelerated Hot Path
-The core mathematical engine leverages **AVX2 and FMA (Fused Multiply-Add)** instructions. By restructuring the variance calculation into a 4-way independent accumulator pattern, we eliminate Read-After-Write (RAW) dependency chains, allowing the CPU to execute multiple arithmetic operations per clock cycle.
-[Image of CPU SIMD register parallel processing]
-
-### 4. Zero-Allocation Response Path
+### 3. Zero-Allocation Response Path
 To meet stringent latency requirements, the strategy bypasses standard heap-based `std::vector` construction during the hot path. We utilize a pre-allocated, reused memory buffer for order transmission, reducing the `on_tick` function to a series of deterministic stack-based operations.
 
 ---
